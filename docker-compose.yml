@@ -1,0 +1,35 @@
+version: "3.5"
+services:
+  transaction-service:
+    container_name: transaction-service
+    image: nzlvrsrg/transaction-service:0.0.1
+    depends_on:
+      - transaction-db
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: jdbc:mysql://transaction-db:3306/transaction_db
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      KAFKA_URL: kafka:29092
+    ports:
+      - 8083:9093
+    networks:
+      - microservices_network
+  transaction-db:
+    container_name: transaction-db
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: transaction_db
+    ports:
+      - 8003:3306
+    networks:
+      - microservices_network
+
+networks:
+  microservices_network:
+    name: microservices_network
